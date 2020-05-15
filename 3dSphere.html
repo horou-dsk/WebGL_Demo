@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<style>
+  html,body {
+    background-color: black;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #myCanvas {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+<body>
+    <canvas id="myCanvas"></canvas>
+</body>
+<script>
+  (function () {
+    const canvas = document.getElementById("myCanvas")
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+// Store the 2D context
+    const ctx = canvas.getContext('2d');
+
+    if (window.devicePixelRatio > 1) {
+      canvas.width = canvas.clientWidth * 2;
+      canvas.height = canvas.clientHeight * 2;
+      ctx.scale(2, 2);
+    }
+
+    let width = canvas.clientWidth // Width of the canvas
+    let height = canvas.clientHeight // Height of the canvas
+
+    const BALL_SIZE = 500, LONGITUDE = 20, LATITUDE = 20
+    const RADIUS = BALL_SIZE / 2
+    const dots = []
+    for (let j = 0; j < LATITUDE; j++) {
+      const angle = (Math.PI * 2 / LONGITUDE) * j
+      for (let i = 0; i < LONGITUDE; i++) {
+        let x = Math.cos((Math.PI * 2 / LONGITUDE) * i) * RADIUS
+        let y = 0
+        let z = Math.sin((Math.PI * 2 / LONGITUDE) * i) * RADIUS
+        const vec = [x * Math.cos(angle) - y * Math.sin(angle), x * Math.sin(angle) + y * Math.cos(angle), z]
+        dots.push(vec)
+      }
+    }
+    /*for (let i = 0; i < LONGITUDE; i++) {
+      for (let j = 0; j < LATITUDE; j++) {
+        dots.push([Math.cos((Math.PI * 2 / LONGITUDE) * j) * RADIUS, RADIUS - BALL_SIZE / LONGITUDE * i, Math.sin((Math.PI * 2 / LONGITUDE) * j) * RADIUS])
+      }
+    }*/
+    let a = 0
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = '#FFFFFF'
+      const angle = a * Math.PI / 180
+      dots.forEach(([x, y, z]) => {
+        ctx.beginPath()
+        // const vec = [x, y * Math.cos(angle) - z * Math.sin(angle), y * Math.sin(angle) + z * Math.cos(angle)]
+        const vec = [x * Math.cos(angle) + z * Math.sin(angle), y, z * Math.cos(angle) - x * Math.sin(angle)]
+        ctx.arc(vec[0] + width / 2, vec[1] + height / 2, 3 - vec[2] / RADIUS, 0, Math.PI * 2)
+        ctx.closePath()
+        ctx.fill()
+      })
+      requestAnimationFrame(draw)
+    }
+    draw()
+    window.addEventListener('keydown', () => {
+      a++
+    })
+  })()
+</script>
+</html>
