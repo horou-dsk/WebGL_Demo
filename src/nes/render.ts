@@ -1,7 +1,7 @@
-import vertex from './textureVertex1.glsl'
-import fragment from './textureFragment1.glsl'
+import vertex from './shader/vertex.glsl'
+import fragment from './shader/fragment.glsl'
 import {glMatrix, mat4, vec3} from 'gl-matrix'
-import {gl} from '../../init'
+import {canvas, gl} from '../../init'
 import Shader from '../../lib/shader'
 
 const texCoord = new Float32Array([
@@ -45,15 +45,16 @@ gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0)
 gl.enableVertexAttribArray(2)
 
 shader.use()
-shader.setInt('texture1', 0)
+shader.setInt('Texture', 0)
 
 // gl.enableClientState()
 
 const trans = mat4.create()
 mat4.identity(trans)
 // mat4.rotate(trans, trans, glMatrix.toRadian(-30), vec3.set(vec3.create(), 0, 0, 1))
-// mat4.scale(trans, trans, vec3.set(vec3.create(), 0.7, 0.7, 0.7))
-shader.setMat4('transform', trans)
+// mat4.scale(trans, trans, vec3.set(vec3.create(), 1.08, 1.08, 1))
+shader.setMat4('MVPMatrix', trans)
+// shader.setVec3('iResolution', canvas.width, canvas.height, 0.0)
 
 const draw = () => {
   // requestAnimationFrame(draw)

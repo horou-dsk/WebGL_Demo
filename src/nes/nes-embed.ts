@@ -1,7 +1,6 @@
 import { NES, Controller } from './nes-lib'
 import {render, setImageData} from './render'
-import game from './roms/rx.nes'
-import wall_image from '../../image/wallhaven-n61px0.jpg'
+import game from './roms/rxgd.nes'
 
 const SCREEN_WIDTH = 256;
 const SCREEN_HEIGHT = 240;
