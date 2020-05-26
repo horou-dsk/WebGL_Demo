@@ -3,9 +3,9 @@ precision mediump float;
 
 out vec4 FragColor;
 //in vec3 ourColor;
-in vec2 TexCoord;
+in vec4 TEX0;
 
-uniform sampler2D iChannel0;
+uniform sampler2D Texture;
 uniform vec3 iResolution;
 
 #if 0
@@ -52,7 +52,7 @@ vec3 ToSrgb(vec3 c){ return vec3(ToSrgb1(c.r), ToSrgb1(c.g), ToSrgb1(c.b)); }
 vec3 Fetch(vec2 pos, vec2 off){
     pos=floor(pos*res+off)/res;
     if (max(abs(pos.x-0.5), abs(pos.y-0.5))>0.5)return vec3(0.0, 0.0, 0.0);
-    return ToLinear(texture(iChannel0, pos.xy, -16.0).rgb); }
+    return ToLinear(texture(Texture, pos.xy, -16.0).rgb); }
 
 // Distance in emulated pixels to nearest texel.
 vec2 Dist(vec2 pos){ pos=pos*res;return -((pos-floor(pos))-vec2(0.5)); }
@@ -143,8 +143,8 @@ void main()
         }
         fragColor.rgb = Tri(pos)*Mask(fragCoord.xy);
     }*/
-    vec2 pos = Warp(TexCoord.xy);
-    vec3 rgb = Tri(pos); // *Mask(TexCoord.xy);
-//    rgb *= Bar(TexCoord.x, iResolution.x) * Bar(TexCoord.x, iResolution.x);
+    vec2 pos = Warp(TEX0.xy);
+    vec3 rgb = Tri(pos); // *Mask(TEX0.xy);
+//    rgb *= Bar(TEX0.x, iResolution.x) * Bar(TEX0.x, iResolution.x);
     FragColor = vec4(ToSrgb(rgb), 1.0);
 }

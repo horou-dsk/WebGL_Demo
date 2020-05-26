@@ -2,15 +2,16 @@
 precision mediump float;
 out vec4 FragColor;
 //in vec3 ourColor;
-in vec2 TexCoord;
+in vec4 TEX0;
 
-uniform sampler2D iChannel0;
+uniform sampler2D Texture;
+uniform vec3 iResolution;
 //uniform sampler2D texture2;
 //uniform float visible;
 
 /*void main() {
-//    FragColor = mix(texture(texture1, TexCoord), texture(texture2, vec2(1.0 - TexCoord.x, TexCoord.y)), visible);
-    FragColor = texture(texture1, TexCoord);
+//    FragColor = mix(texture(texture1, TEX0), texture(texture2, vec2(1.0 - TEX0.x, TEX0.y)), visible);
+    FragColor = texture(texture1, TEX0);
 //    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
 }*/
 #define SCAN_LINE_MULT 1250.0
@@ -29,7 +30,7 @@ vec2 curve(vec2 uv)
 vec2 CRTCurveUV( vec2 uv )
 {
     uv = uv * 2.0 - 1.0;
-    vec2 offset = abs( uv.yx ) / vec2( 6.0, 4.0 );
+    vec2 offset = abs( uv.yx ) / vec2( 7.0, 7.0 );
     uv = uv + uv * offset * offset;
     uv = uv * 0.5 + 0.5;
     return uv;
@@ -48,9 +49,23 @@ void DrawScanline( inout vec3 color, vec2 uv )
     color *= scanline * grille * 1.2;
 }
 
+/*void blurry(inout vec3 color, vec2 uv) {
+    if (color.r == 0.0 && color.g == 0.0 && color.b == 0.0) {
+
+    }
+}*/
+
+/*vec2 warp=vec2(1.0/32.0, 1.0/24.0);
+
+vec2 Warp(vec2 pos){
+    pos=pos*2.0-1.0;
+    pos*=vec2(1.0+(pos.y*pos.y)*warp.x, 1.0+(pos.x*pos.x)*warp.y);
+    return pos*0.5+0.5;
+}*/
+
 void main()
 {
-    /*vec2 tc = TexCoord.xy;
+    /*vec2 tc = TEX0.xy;
 
     // Distance from the center
     float dx = abs(0.5-tc.x);
@@ -69,16 +84,16 @@ void main()
     tc.y += 0.5;*/
 
     // Get texel, and add in scanline if need be
-    /*vec4 cta = texture(iChannel0, vec2(tc.x, tc.y));
+    /*vec4 cta = texture(Texture, vec2(tc.x, tc.y));
 
     cta.rgb += sin(tc.y * SCAN_LINE_MULT) * 0.12;
 
     // Cutoff
     if(tc.y > 1.0 || tc.x < 0.0 || tc.x > 1.0 || tc.y < 0.0)
         cta = vec4(0.0);*/
-    vec2 uv = TexCoord.xy;
+    vec2 uv = TEX0.xy;
     vec2 crtUV = CRTCurveUV( uv );
-    vec4 t = texture(iChannel0, crtUV);
+    vec4 t = texture(Texture, crtUV);
     vec3 color = t.xyz;
     if ( crtUV.x < 0.0 || crtUV.x > 1.0 || crtUV.y < 0.0 || crtUV.y > 1.0 )
     {
@@ -87,19 +102,24 @@ void main()
     DrawVignette( color, crtUV );
     DrawScanline( color, uv );
     FragColor = vec4(color, t.w);
-//    FragColor = texture(iChannel0, TexCoord);
-//    FragColor = vec4(TexCoord.x, 0.0, 0.0, 1.0);
-//    FragColor = texture(iChannel0, TexCoord);
-    /*vec3 oricol = texture( iChannel0, vec2(q.x,q.y) ).xyz;
+    /*if ( crtUV.x < 0.0 || crtUV.x > 1.0 || crtUV.y < 0.0 || crtUV.y > 1.0 )
+    {
+        crtUV = vec2(0.5, 0.5);
+    }
+    FragColor = vec4(crtUV, 0.0, 1.0);*/
+//    FragColor = texture(Texture, TEX0);
+//    FragColor = vec4(TEX0.x, 0.0, 0.0, 1.0);
+//    FragColor = texture(Texture, TEX0);
+    /*vec3 oricol = texture( Texture, vec2(q.x,q.y) ).xyz;
     vec3 col;
     float x =  sin(0.3*iTime+uv.y*21.0)*sin(0.7*iTime+uv.y*29.0)*sin(0.3+0.33*iTime+uv.y*31.0)*0.0017;
 
-    col.r = texture(iChannel0,vec2(x+uv.x+0.001,uv.y+0.001)).x+0.05;
-    col.g = texture(iChannel0,vec2(x+uv.x+0.000,uv.y-0.002)).y+0.05;
-    col.b = texture(iChannel0,vec2(x+uv.x-0.002,uv.y+0.000)).z+0.05;
-    col.r += 0.08*texture(iChannel0,0.75*vec2(x+0.025, -0.027)+vec2(uv.x+0.001,uv.y+0.001)).x;
-    col.g += 0.05*texture(iChannel0,0.75*vec2(x+-0.022, -0.02)+vec2(uv.x+0.000,uv.y-0.002)).y;
-    col.b += 0.08*texture(iChannel0,0.75*vec2(x+-0.02, -0.018)+vec2(uv.x-0.002,uv.y+0.000)).z;
+    col.r = texture(Texture,vec2(x+uv.x+0.001,uv.y+0.001)).x+0.05;
+    col.g = texture(Texture,vec2(x+uv.x+0.000,uv.y-0.002)).y+0.05;
+    col.b = texture(Texture,vec2(x+uv.x-0.002,uv.y+0.000)).z+0.05;
+    col.r += 0.08*texture(Texture,0.75*vec2(x+0.025, -0.027)+vec2(uv.x+0.001,uv.y+0.001)).x;
+    col.g += 0.05*texture(Texture,0.75*vec2(x+-0.022, -0.02)+vec2(uv.x+0.000,uv.y-0.002)).y;
+    col.b += 0.08*texture(Texture,0.75*vec2(x+-0.02, -0.018)+vec2(uv.x-0.002,uv.y+0.000)).z;
 
     col = clamp(col*0.6+0.4*col*col*1.0,0.0,1.0);
 

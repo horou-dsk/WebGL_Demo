@@ -1,5 +1,5 @@
-import vertex from './shader/vertex.glsl'
-import fragment from './shader/fragment.glsl'
+import vertex from './custom-crt02/vertex.glsl'
+import fragment from './custom-crt02/fragment.glsl'
 import {glMatrix, mat4, vec3} from 'gl-matrix'
 import {canvas, gl} from '../../init'
 import Shader from '../../lib/shader'
@@ -19,7 +19,7 @@ gl.bindTexture(gl.TEXTURE_2D, texture)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
 const shader = new Shader(vertex, fragment)
 const VAO = gl.createVertexArray()
@@ -44,6 +44,8 @@ gl.bufferData(gl.ARRAY_BUFFER, texCoord, gl.STATIC_DRAW)
 gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0)
 gl.enableVertexAttribArray(2)
 
+// gl.enable(gl.FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
+
 shader.use()
 shader.setInt('Texture', 0)
 
@@ -54,7 +56,7 @@ mat4.identity(trans)
 // mat4.rotate(trans, trans, glMatrix.toRadian(-30), vec3.set(vec3.create(), 0, 0, 1))
 // mat4.scale(trans, trans, vec3.set(vec3.create(), 1.08, 1.08, 1))
 shader.setMat4('MVPMatrix', trans)
-// shader.setVec3('iResolution', canvas.width, canvas.height, 0.0)
+shader.setVec3('iResolution', canvas.width, canvas.height, 0.0)
 
 const draw = () => {
   // requestAnimationFrame(draw)
