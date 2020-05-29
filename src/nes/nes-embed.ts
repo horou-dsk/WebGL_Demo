@@ -1,6 +1,6 @@
 import { NES, Controller } from './nes-lib'
 import {render, setImageData} from './render'
-import game from './roms/rxgd.nes'
+import game from './roms/NinjaRyukenden(J).nes'
 
 const SCREEN_WIDTH = 256;
 const SCREEN_HEIGHT = 240;
