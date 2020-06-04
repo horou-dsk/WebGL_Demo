@@ -1,11 +1,11 @@
-import {canvas, gl} from '../init'
+import {canvas, gl} from '../../init'
 import colors_vs from './1.colors.vs.glsl'
 import colors_fs from './1.colors.fs.glsl'
 import lamp_vs from './1.lamp.vs.glsl'
 import lamp_fs from './1.lamp.fs.glsl'
-import Camera from '../lib/camera'
+import Camera from '../../lib/camera'
 import {glMatrix, mat3, mat4, vec3} from 'gl-matrix'
-import Shader from '../lib/shader'
+import Shader from '../../lib/shader'
 
 const camera = new Camera(vec3.set(vec3.create(), 0, 0, 6))
 
