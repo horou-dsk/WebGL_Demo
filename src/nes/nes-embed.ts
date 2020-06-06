@@ -1,6 +1,7 @@
 import { NES, Controller } from './nes-lib'
 import {render, setImageData} from './render'
-import game from './roms/NinjaRyukenden(J).nes'
+import game from './roms/rx.nes'
+import handleGamePad from './gamepad-controls'
 
 const SCREEN_WIDTH = 256;
 const SCREEN_HEIGHT = 240;
@@ -15,6 +16,7 @@ const SAMPLE_MASK = SAMPLE_COUNT - 1;
 const audio_samples_L = new Float32Array(SAMPLE_COUNT);
 const audio_samples_R = new Float32Array(SAMPLE_COUNT);
 let audio_write_cursor = 0, audio_read_cursor = 0;
+const audio_ctx = new window.AudioContext();
 
 
 const nes = new NES({
@@ -33,6 +35,7 @@ function onAnimationFrame(){
   image.data.set(framebuffer_u8);
   setImageData(image)
   render()
+  handleGamePad(nes)
   nes.frame();
 }
 
@@ -45,7 +48,10 @@ function audio_callback(event){
   const len = dst.length;
 
   // Attempt to avoid buffer underruns.
-  if(audio_remain() < AUDIO_BUFFERING) nes.frame();
+  if(audio_remain() < AUDIO_BUFFERING) {
+    handleGamePad(nes)
+    nes.frame()
+  }
 
   const dst_l = dst.getChannelData(0);
   const dst_r = dst.getChannelData(1);
@@ -59,6 +65,7 @@ function audio_callback(event){
 }
 
 function keyboard(callback, event){
+  // console.log(event.keyCode)
   const player = 1;
   switch(event.keyCode){
     case 38: // UP
@@ -89,10 +96,10 @@ function nes_init(){
   framebuffer_u32 = new Uint32Array(buffer);
 
   // Setup audio.
-  const audio_ctx = new window.AudioContext();
   const script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2);
   script_processor.addEventListener('audioprocess', audio_callback);
   script_processor.connect(audio_ctx.destination);
+
 }
 
 function nes_boot(rom_data){
@@ -129,6 +136,7 @@ function nes_load_url(path){
 
 document.addEventListener('keydown', (event) => {keyboard(nes.buttonDown, event)});
 document.addEventListener('keyup', (event) => {keyboard(nes.buttonUp, event)});
+document.addEventListener('click', () => audio_ctx.resume())
 window.addEventListener('load', () => {
   // console.log(wall_image)
   // console.log(game)
