@@ -1,4 +1,4 @@
-import {gl} from '../../init'
+import {gl, canvas} from '../../init'
 import wallhaven_image from '../../image/wallhaven-n61px0.jpg'
 import vertex from './shader/vertex.glsl'
 import fragment from './shader/fragment1.glsl'
@@ -83,6 +83,10 @@ function render(image: HTMLImageElement) {
   // mat4.rotate(trans, trans, glMatrix.toRadian(-30), vec3.set(vec3.create(), 0, 0, 1))
   mat4.scale(trans, trans, vec3.set(vec3.create(), 0.7, 0.7, 0.7))
   shader.setMat4('transform', trans)
+  shader.setFloat('time', 0.0)
+  canvas.addEventListener('mousemove', event => {
+    shader.setFloat('time', Math.abs(1 - event.offsetX / canvas.offsetWidth))
+  })
 
   const draw = () => {
     gl.clearColor(0.1, 0.1, 0.1, 1)

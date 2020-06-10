@@ -35,6 +35,10 @@ export default class Shader {
     gl.uniform1i(gl.getUniformLocation(this.ID, name), value)
   }
 
+  public setFloat(name: string, value: number) {
+    gl.uniform1f(gl.getUniformLocation(this.ID, name), value)
+  }
+
   public setVec3(name: string, x: number, y: number, z: number) {
     gl.uniform3f(gl.getUniformLocation(this.ID, name), x, y, z)
   }
