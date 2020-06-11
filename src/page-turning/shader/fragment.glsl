@@ -7,7 +7,7 @@ out vec4 FragColor;
 
 uniform sampler2D texture1;
 uniform sampler2D targetTex;
-float time = 0.4f;
+uniform float time;
 const float MIN_AMOUNT = -0.16;
 const float MAX_AMOUNT = 1.3;
 const float PI = 3.141592653589793;
@@ -96,7 +96,8 @@ void main() {
     mat3 rotation = mat3(
     c, s, 0,
     -s, c, 0,
-    0.12, 0.258, 1
+//    0, 0, 1
+     0.12, 0.258, 1
     );
 
     c = cos(angle);
@@ -106,17 +107,18 @@ void main() {
     mat3 rrotation = mat3(
     c, s, 0,
     -s, c, 0,
-    0.15, -0.5, 1
+//    0, 0, 1
+     0.15, -0.5, 1
     );
 
     vec3 point = rotation * vec3(v_uv0, 1.0);
     float amount = time * (MAX_AMOUNT - MIN_AMOUNT) + MIN_AMOUNT;
     float cylinderAngle = 2.0 * PI * amount;
     float yc = point.y - amount;
-    if (yc < -cylinderRadius) {
+    /*if (yc < -cylinderRadius) {
         FragColor = behindSurface(amount, cylinderAngle, yc, point, rrotation);
         return;
-    }
+    }*/
     if (yc > cylinderRadius) {
         FragColor = texture(texture1, v_uv0);
         return;
@@ -133,7 +135,7 @@ void main() {
         return;
     }
     vec4 color = backside(yc, point);
-    vec4 otherColor;
+    /*vec4 otherColor;
     if (yc < 0.0) {
         float shado = 1.0 - (sqrt(pow(abs(point.x - 0.5), 2.0) + pow(abs(point.y - 0.5), 2.0)) / 0.71);
         shado *= pow(abs(-yc / cylinderRadius), 3.0);
@@ -145,5 +147,6 @@ void main() {
     color = antiAlias(color, otherColor, cylinderRadius - abs(yc));
     vec4 cl = seeThroughWithShadow(amount, cylinderAngle, yc, v_uv0, point, rotation, rrotation);
     float dist = distanceToEdge(point);
-    FragColor = antiAlias(color, cl, dist);
+    FragColor = antiAlias(color, cl, dist);*/
+    FragColor = color;
 }
