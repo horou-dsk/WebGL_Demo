@@ -97,7 +97,7 @@ vec4 ccc(vec2 uv, float xc, mat3 rrotation) {
 }
 
 void main() {
-    const float angle = -65.0 * PI / 180.0;
+    const float angle = -130.0 * PI / 180.0;
     float c = cos(-angle);
     float s = sin(-angle);
 
@@ -118,11 +118,11 @@ void main() {
 
     vec3 Tex = rotation * vec3(v_uv0, 1.0);
 //    vec3 uv = Tex * rotation;// (vec3(Tex.xy, 1.0) * rrotation).xy;
-    float xc = cos(angle); // - time * 1.0 / cos(angle);
+    float xc = (rotation * vec3(time - 0.0, time - 0.0, 0.0)).x; // tan(angle); // 1.0 - 1.0 / cos(angle) - time * 1.0 / cos(angle);
     //    FragColor = texture(texture1, Tex);// jz(Tex);// zoom(Tex, scale);
-//    FragColor = jz1(Tex.xy, xc, rrotation);
+    FragColor = jz1(Tex.xy, xc, rrotation);
 //    FragColor = vec4(Tex.y, 0.0, 0.0, 0.0);
-    FragColor = ccc(Tex.xy, xc, rrotation);
+//    FragColor = ccc(Tex.xy, xc, rrotation);
     /*if (tb(uv.xy)) {
         FragColor = vec4(0.0);
         return;
